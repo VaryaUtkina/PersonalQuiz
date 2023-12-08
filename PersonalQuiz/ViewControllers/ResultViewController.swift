@@ -16,38 +16,31 @@ final class ResultViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
-        
-        let animal = getResult(from: answersChosen)
-        animalLabel.text = "Вы - \(animal?.rawValue ?? "🐙")"
-        descriptionLabel.text = animal?.definition ?? "Вы осьминог"
+        updateResult()
     }
     
     @IBAction func doneButtonAction(_ sender: UIBarButtonItem) {
         dismiss(animated: true)
     }
     
-    private func getResult(from answers: [Answer]) ->  Animal? {
-        var dogCount = 0
-        var catCount = 0
-        var rabbitCount = 0
-        var turtleCount = 0
-        var answersCount: [Animal: Int] = [:]
+}
+
+extension ResultViewController {
+    private func updateResult() {
+        var frequencyOfAnimals: [Animal: Int] = [:]
+        let animals = answersChosen.map { $0.animal }
         
-        for answer in answers {
-            switch answer.animal {
-            case .dog: dogCount += 1
-            case .cat: catCount += 1
-            case .rabbit: rabbitCount += 1
-            case .turtle: turtleCount += 1
-            }
+        for animal in animals {
+            frequencyOfAnimals[animal, default: 0] += 1
         }
-        answersCount = [
-            .dog: dogCount,
-            .cat: catCount,
-            .rabbit: rabbitCount,
-            .turtle: turtleCount
-        ]
-        let sortedAnswersCount = answersCount.sorted { $0.value > $1.value }
-        return sortedAnswersCount.first?.key
+        
+        let sortedFrequentOfAnimals = frequencyOfAnimals.sorted { $0.value > $1.value }
+        guard let mostFrequentAnimal = sortedFrequentOfAnimals.first?.key else { return }
+        updateUI(with: mostFrequentAnimal)
+    }
+    
+    private func updateUI(with animal: Animal) {
+        animalLabel.text = "Вы - \(animal.rawValue)!"
+        descriptionLabel.text = animal.definition
     }
 }
