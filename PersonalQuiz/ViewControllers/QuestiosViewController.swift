@@ -44,7 +44,8 @@ final class QuestiosViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        guard let resultVC = segue.destination as? ResultViewController else { return }
+        resultVC.answersChosen = answersChosen
     }
 
     // MARK: - IB Actions
@@ -70,6 +71,9 @@ final class QuestiosViewController: UIViewController {
         nextQuestion()
     }
     
+    deinit {
+        print("\(type(of: self)) has been deallocated")
+    }
 }
 
 // MARK: - Private Methods
